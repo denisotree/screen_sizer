@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ title }}</title>
+        <link rel="icon" href="static/img/favicon.ico" />
+        {% for css in settings.assets['css'] %}
+            <link href="static/{{ css }}" media="screen" rel="stylesheet" type="text/css" />
+        {% endfor %}
+        {% for js in settings.assets['js-before'] %}
+            <script type="text/javascript" 
+            src="static/{{ js }}" ></script>
+        {% endfor %}
+    </head>
+    <body>
+        <div class="wrapper">
+            <header>  
+                <ul id="menu">
+                    <li class="separator">{{ _("Sizes") }}</li>
+                    {% for category in sizes %}
+                        <li id="{{ category[0] }}" class="size-category">
+                            <span class="label">{{ _(category[0]) }}</span>
+                            <ul>
+                            {% for size in category[1] %}
+                                <li class="size" data-size="{{ size[2] }} {{ size[3] }}">
+                                    <span class="size-name">{{ _(size[0]) }}</span><span class="dimensions">{{ size[2] }} x {{ size[3] }}</span>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </li>  
+                    {% endfor %}
+                    <li id="frequent" class="size-category"><span class="label">{{ _("Frequent") }}</span>
+                        <ul>
+                        {% for size in frequent %}
+                            <li class="size" data-size="{{ size[0] }} {{ size[1] }}">
+                                <span class="dimensions">{{ size[0] }} x {{ size[1] }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="separator">{{ _("Actions") }}</li>
+                    <li id="rotate">{{ _("Rotate") }}</li>        
+                    <li id="refresh">{{ _("Refresh") }}</li> 
+                    <li id="fullscreen">{{ _("Fullscreen") }}</li>
+                    {% if settings.screenshots_enabled %}
+                        <li id="screenshot" class="modal-open" data-modal-id="screenshot-modal">{{ _("Screenshot") }}...</li>
+                    {% endif %}
+                    <li>
+                        <a href="" id="permalink" title='{{ _("Permalink to this test") }}'>{{ _("Permalink") }}</a>
+                        <input id="copy-permalink" size="35" type="text" name="url" readonly />
+                    </li>
+                    <li id="more" class="modal-open" data-modal-id="more-modal"><span class="label" >{{ _("More") }}...</span></li>
+                    <li id="about" class="modal-open" data-modal-id="about-modal"><span class="label" >{{ _("About") }}...</span></li>
+                
+                </ul>
+                {% if settings.screenshots_enabled %}
+                <div id="screenshot-modal" class="modal">
+                    <div class="modal-bg"></div>
+                    <div class="window">
+                        <h1>{{ _("Screenshot") }}</h1>
+                        <span class="modal-close">
+                        x
+                        </span>
+                        <p class="helper">{{ _("You can use the button below to take a screenshot of your webpage. Screenshots are hosted on Screen Sizer's server, and may be deleted at any time, without notice. Please download them if you want them to be safe.") }}<p>
+                        <div class="action">
+                            <button class="capture">{{ _("Take screenshot") }}</button> 
+                            <form>
+                                <label for="cropped">{{ _("Cropped") }}</label><input type="checkbox" id="cropped" name="cropped" checked>
+                            </form> 
+                            <div class="spinner">
+                              <div class="rect1"></div>
+                              <div class="rect2"></div>
+                              <div class="rect3"></div>
+                              <div class="rect4"></div>
+                              <div class="rect5"></div>
+                            </div>
+                            <button class="clear">{{ _("Delete all") }}</button>  
+                        </div>
+                        <div id="screenshots">
+
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div id="more-modal" class="modal">
+                    <div class="modal-bg"></div>
+                    <div class="window">
+                        <h1>{{ _("More") }}</h1>
+                        <span class="modal-close">
+                        x
+                    </span>
+                        <h2>{{ _("Bookmarklet") }}</h2>
+                        <a id="bookmarklet"
+                            href="javascript:(function(){window.open('{{ bookmarklet_url }}'+'?url='+location.href);})();" class="button">{{ settings.title }}
+                            
+                            </a>
+                        <p class="help">{{ _("Add this link into your browser bookmarks. You'll then be able to check any website in one click.") }}</p>
+                        <h2>{{ _("Keyboard shortcuts") }}</h2>
+                        <table class="shortcuts">
+                            <tbody>
+                                <tr>
+                                    <th>{{ _("Key") }}</th>
+                                    <th>{{ _("Action") }}</th>
+                                </tr>
+                                <tr>
+                                    <td>+</td>
+                                    <td>{{ _("Zoom-in") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>-</td>
+                                    <td>{{ _("Zoom-out") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>R</td>
+                                    <td>{{ _("Rotate") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>P</td>
+                                    <td>{{ _("Permalink") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>F</td>
+                                    <td>{{ _("Fullscreen") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>W</td>
+                                    <td>{{ _("Focus URL input") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>X</td>
+                                    <td>{{ _("Focus width input") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>C</td>
+                                    <td>{{ _("Focus height input") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ _("Spacebar") }}</td>
+                                    <td>{{ _("Iterate through frequent sizes, from smallest to biggest") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ _("Ctrl + Spacebar") }}</td>
+                                    <td>{{ _("Iterate through frequent sizes, from biggest to smallest") }}</td>
+                                </tr>
+                                {% if settings.screenshots_enabled %}
+                                <tr>
+                                    <td>{{ _("S") }}</td>
+                                    <td>{{ _("Take a screenshot of current URL with current dimensions") }}</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                            
+                        
+                    </div>
+                </div>
+                <div id="about-modal" class="modal">
+                    <div class="modal-bg"></div>
+                    <div class="window">
+                        <h1>{{ _("About") }}</h1>
+                        <span class="modal-close">
+                        x
+                    </span>
+                        <p id="presentation">{{ _("Use this tool to check how a website renders under different viewport sizes.") }}</p> 
+                        <p id="screenshot-helper">{{ _("Screenshots are done via PhantomJS, a headless WebKit browser.") }}</p>       
+                        <p class="warning">{{ _("Some websites block Iframes. Screen Sizer won't work for them.") }}</p>   
+                        <p>{{ _('Inspired from <a href="http://quirktools.com/screenfly/">Screenfly</a> and <a href="http://testsize.com/">TestSize</a>.') }}</p>
+                        <p>{{ _('Hand crafted by <a href="http://eliotberriot.com">Eliot Berriot</a> using') }} <a href="http://flask.pocoo.org/">Flask</a>, <a href="https://github.com/sindresorhus/pageres">Pageres</a>, <a href="http://jquery.com/">jQuery</a><p>
+                        <p>{{ _('This tool is a free software. <a href="https://github.com/EliotBerriot/screen-sizer">Grab the source code</a> and run your own!') }}</p>
+                    </div>
+                </div>
+                
+                <form id="language">                        
+                    <select id="languages">
+                    {% for locale, attributes in settings.languages.items() %}
+                            <option value="{{ attributes['flag'] }}"
+                            {% if attributes['flag'] == current_locale %} selected="selected"{% endif %}>{{ attributes['name']}}</option>
+                    {% endfor %}
+                    </select> 
+                </form>
+                
+            </header>
+            <section>
+                <div class="header">
+                 <h1><a href="/">{{ settings.title }}</a></h1>
+                    <form id="website" method="post" action=".">
+                        <input id="frame-url" size="35" type="text"
+placeholder="{{ _('Enter a valid URL here') }}" title='{{ _('Enter a valid URL
+here') }}' name="url" />
+                        <input id="custom-width" type="number" class="width" 
+                            placeholder="{{ _('width') }}" title="{{ _('width')
+}}" value="{{ dimensions[0] }}"/>
+                        <input id="custom-height" type="number" class="height" placeholder="{{
+_('height') }}" title="{{ _('height') }}" value="{{ dimensions[1] }}"
+/>
+                        <input type="submit" value="{{ _('OK') }}" />
+                    </form>
+                    
+                </div>
+                <div class="iframe-wrapper">
+                    <a href="" class="close-fullscreen">{{ _('Exit full-screen mode') }}</a>
+                    <iframe id="external-content" src="{{ iframe_url }}" width="{{ dimensions[0] }}" height="{{ dimensions[1] }}"></iframe>
+                </div>
+            </section>
+        </div>
+        {% for js in settings.assets['js-after'] %}
+            <script type="text/javascript" 
+            src="static/{{ js }}" ></script>
+        {% endfor %}
+        {% if settings.screenshots_enabled %}
+        <script type="text/javascript">
+            var screenshots_enabled=true;
+        </script>
+        <script type="text/template" id="screenshotTemplate">
+            <div class="screenshot">
+                <div class="info">
+                     <p class="from" data-domain="{1}"><span class="label">{{ _('Source') }}</span><a href="http://{1}/{5}" target="_blank">{1}/{5}</a></p>
+                    <p class="size"><span class="label">{{ _('Size') }}</span>{2} x {3}</p>
+                    <p class="timestamp"><span class="label">{{ _('Date') }}</span>{4}</p>
+                    <a href="{0}" class="permalink" target="_blank">{{ _('Permalink') }}</a> - <a href="{0}" download="{1}-{2}x{3}-{4}.png" class="download">{{ _('Download') }}</a>
+                    <button class="delete">{{ _('Delete') }}</button>
+                </div>
+                <a href="{0}" class="img" target="_blank"><img src="{0}" /></a>
+            </div>
+        </script>
+        {% endif %}
+    </body>
+</html>

@@ -1,0 +1,13 @@
+*.pyc
+*/*.pyc
+
+*.sublime*
+.idea/*
+
+settings.py
+
+
+*.kate-swp
+screenshots
+
+screensizer/
